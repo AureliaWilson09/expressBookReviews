@@ -4,7 +4,7 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-
+// --- INSCRIPTION ---
 public_users.post("/register", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -21,7 +21,7 @@ public_users.post("/register", (req, res) => {
   return res.status(201).json({ message: "User successfully registered. Now you can login" });
 });
 
-
+// --- TASK 10 : Obtenir tous les livres (Async/Await) ---
 public_users.get('/', async function (req, res) {
   try {
     const booksList = await new Promise((resolve, reject) => {
@@ -37,7 +37,7 @@ public_users.get('/', async function (req, res) {
   }
 });
 
-
+// --- TASK 11 : Obtenir par ISBN (Uniformisé avec Async/Await et Try/Catch) ---
 public_users.get('/isbn/:isbn', async function (req, res) {
   const isbn = req.params.isbn;
 
@@ -55,7 +55,7 @@ public_users.get('/isbn/:isbn', async function (req, res) {
   }
 });
   
-
+// --- TASK 12 : Obtenir par Auteur (Modèle Async/Await de référence) ---
 public_users.get('/author/:author', async function (req, res) {
   const authorParam = decodeURIComponent(req.params.author).replace(/\+/g, ' ').toLowerCase();
 
@@ -77,7 +77,7 @@ public_users.get('/author/:author', async function (req, res) {
   }
 });
 
-
+// --- TASK 13 : Obtenir par Titre (Uniformisé avec l'architecture de la Task 12) ---
 public_users.get('/title/:title', async function (req, res) {
   const titleParam = decodeURIComponent(req.params.title).replace(/\+/g, ' ').toLowerCase();
 
@@ -99,7 +99,7 @@ public_users.get('/title/:title', async function (req, res) {
   }
 });
 
-
+// --- RECUPERATION DES AVIS ---
 public_users.get('/review/:isbn', function (req, res) {
   const isbn = req.params.isbn;
   if (books[isbn]) {
