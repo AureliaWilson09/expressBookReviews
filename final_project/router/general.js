@@ -84,32 +84,40 @@ public_users.get('/author/:author', async function (req, res) {
 });
 
 // Get all books based on title
-public_users.get('/title/:title', function (req, res) {
-    const title = decodeURIComponent(req.params.title).replace(/\+/g, ' ').toLowerCase();
-    const booksKeys = Object.keys(books); 
-    let filteredBooks = [];
-  
-    booksKeys.forEach((key) => {
-      if (books[key].title.toLowerCase() === title) {
-        filteredBooks.push({ id: key, ...books[key] });
+public_users.get('/title/:title', async function (req, res) {
+  const titleParam = decodeURIComponent(req.params.title).replace(/\+/g, ' ').toLowerCase();
+
+  try {
+    const filteredBooks = await new Promise((resolve, reject) => {
+      const keys = Object.keys(books);
+      let matches = [];
+
+      keys.forEach((key) => {
+        if (books[key].title.toLowerCase() === titleParam) {
+          matches.push({ id: key, ...books[key] });
+        }
+      });
+
+      if (matches.length > 0) {
+        resolve(matches);
+      } else {
+        reject(new Error("Book not found"));
       }
     });
-  
-    if (filteredBooks.length > 0) {
-      return res.status(200).json(filteredBooks);
-    } else {
-      return res.status(404).json({ message: "Book not found" });
-    }
-  });  
+
+    return res.status(200).json(filteredBooks);
+  } catch (error) {
+    return res.status(404).json({ message: error.message });
+  }
+}); 
 
 //  Get book review
-// Obtenir les avis d'un livre basé sur l'ISBN (ID)
 public_users.get('/review/:isbn', function (req, res) {
-    const isbn = req.params.isbn; // Récupère l'ID (ex: 1)
-    const book = books[isbn];    // Trouve le livre dans votre liste
+    const isbn = req.params.isbn; 
+    const book = books[isbn];
   
     if (book) {
-      // Renvoie l'objet des avis (qui est {} actuellement)
+      
       return res.status(200).json(book.reviews); 
     } else {
       return res.status(404).json({ message: "Book not found" });
